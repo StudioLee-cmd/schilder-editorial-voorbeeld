@@ -1,0 +1,455 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================================================
+   EDITORIAL BOLD TEMPLATE
+   Based on Chainzoku.io's design system.
+   All animations are CSS transitions + Intersection Observer.
+   No animation libraries needed.
+   =================================================================== */
+
+:root {
+  --color-bg: #fffff7;
+  --color-dark: #1c1616;
+  --color-accent: #cdfb52;
+  --color-blue: #5c97ce;
+  --color-purple: #4f2a62;
+  --color-olive: #485229;
+  --color-red: #ab0000;
+  --color-pink: #deafd2;
+  --color-hotpink: #f756a3;
+  --color-navy: #282e67;
+  --color-gray: #5c606b;
+  --color-steel: #8ba9cc;
+  --color-silver: #c4c1c6;
+  --color-green-soft: #7dd796;
+
+  --page-margin: 1.5625rem;
+  --ease-reveal: cubic-bezier(.19, 1, .22, 1);
+  --ease-bounce: cubic-bezier(.175, .885, .32, 1.275);
+  --ease-out: cubic-bezier(.215, .61, .355, 1);
+}
+
+@media (min-width: 700px) { :root { --page-margin: 2.1875rem; } }
+@media (min-width: 1024px) { :root { --page-margin: 2.8125rem; } }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+  font-family: var(--font-body), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  background: var(--color-bg);
+  color: var(--color-dark);
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+
+/* ===================================================================
+   TYPOGRAPHY
+   Display: Anton (stands in for DrukHeavy) — bold condensed uppercase
+   Body: DM Sans italic (stands in for NeueHaasGrotDisp)
+   UI: Space Grotesk bold (stands in for AkzidenzGrotesk-BoldExtended)
+   =================================================================== */
+
+/* Display headings */
+.t-display {
+  font-family: var(--font-display), 'Anton', sans-serif;
+  font-weight: 400; /* Anton only has 400 */
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+}
+
+.t-display-xl {
+  font-size: clamp(3.75rem, 12vw, 18.75rem);
+}
+.t-display-lg {
+  font-size: clamp(3rem, 9vw, 12.5rem);
+}
+.t-display-md {
+  font-size: clamp(2.5rem, 7vw, 6.25rem);
+}
+.t-display-sm {
+  font-size: clamp(1.5rem, 4vw, 3.75rem);
+}
+
+/* Body text — italic, bold */
+.t-body-lg {
+  font-family: var(--font-body), sans-serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(0.9375rem, 2vw, 2.5rem);
+  line-height: 1.39;
+}
+.t-body {
+  font-family: var(--font-body), sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(0.875rem, 1.2vw, 1.125rem);
+  line-height: 1.2;
+}
+
+/* UI / Labels — extended bold */
+.t-caption {
+  font-family: var(--font-ui), 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.5625rem, 0.8vw, 0.875rem);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+.t-label {
+  font-family: var(--font-ui), 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+/* Accent highlight — lime green skewed background */
+.highlight {
+  position: relative;
+  display: inline;
+  padding: 0 0.15em;
+}
+.highlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent);
+  z-index: -1;
+  transform: skewX(-3deg);
+}
+
+/* Accent underline */
+.underline-accent {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 3px;
+}
+
+/* ===================================================================
+   WORD-BY-WORD REVEAL ANIMATION
+   Words start translated 100% down, reveal on .in-view
+   Exact easing: cubic-bezier(.19, 1, .22, 1), 1.5s duration
+   =================================================================== */
+
+.word-reveal .line {
+  overflow: hidden;
+  display: block;
+}
+.word-reveal .word {
+  display: inline-block;
+  transform: translate3d(0, 110%, 0);
+  transition: transform 1.5s var(--ease-reveal);
+  will-change: transform;
+}
+.word-reveal.in-view .word {
+  transform: none;
+}
+/* Stagger: each line gets increasing delay via CSS var */
+.word-reveal .line:nth-child(1) .word { transition-delay: 0s; }
+.word-reveal .line:nth-child(2) .word { transition-delay: 0.08s; }
+.word-reveal .line:nth-child(3) .word { transition-delay: 0.16s; }
+.word-reveal .line:nth-child(4) .word { transition-delay: 0.24s; }
+.word-reveal .line:nth-child(5) .word { transition-delay: 0.32s; }
+.word-reveal .line:nth-child(6) .word { transition-delay: 0.4s; }
+.word-reveal .line:nth-child(7) .word { transition-delay: 0.48s; }
+.word-reveal .line:nth-child(8) .word { transition-delay: 0.56s; }
+
+/* Underline bar reveal */
+.word-reveal .underline-bar {
+  display: inline-block;
+  height: 3px;
+  background: var(--color-accent);
+  transform: translateX(-100%);
+  transition: transform 1.5s var(--ease-reveal);
+  transition-delay: inherit;
+}
+.word-reveal.in-view .underline-bar {
+  transform: translateX(0);
+}
+
+/* ===================================================================
+   CHARACTER-BY-CHARACTER REVEAL
+   Each letter in overflow:hidden wrapper, staggered translateY
+   =================================================================== */
+
+.char-reveal .char {
+  display: inline-block;
+  overflow: hidden;
+}
+.char-reveal .char .letter {
+  display: inline-block;
+  transform: translateY(100%);
+  transition: transform 1s var(--ease-reveal);
+}
+.char-reveal.in-view .char .letter {
+  transform: none;
+}
+
+/* ===================================================================
+   FADE-UP REVEAL (simple)
+   =================================================================== */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-reveal);
+}
+.fade-up.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger children */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-reveal);
+}
+.stagger-children.in-view > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
+.stagger-children.in-view > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.1s; }
+.stagger-children.in-view > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.2s; }
+.stagger-children.in-view > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.3s; }
+.stagger-children.in-view > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.4s; }
+.stagger-children.in-view > *:nth-child(6) { opacity: 1; transform: none; transition-delay: 0.5s; }
+.stagger-children.in-view > *:nth-child(7) { opacity: 1; transform: none; transition-delay: 0.6s; }
+.stagger-children.in-view > *:nth-child(8) { opacity: 1; transform: none; transition-delay: 0.7s; }
+
+/* ===================================================================
+   CLIP-PATH REVEAL (left-to-right or right-to-left)
+   =================================================================== */
+
+.clip-reveal-ltr {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.2s var(--ease-reveal);
+}
+.clip-reveal-ltr.in-view {
+  clip-path: inset(0 0% 0 0);
+}
+.clip-reveal-rtl {
+  clip-path: inset(0 0 0 100%);
+  transition: clip-path 1.2s var(--ease-reveal);
+}
+.clip-reveal-rtl.in-view {
+  clip-path: inset(0 0 0 0%);
+}
+
+/* ===================================================================
+   MARQUEE ANIMATION (decorative horizontal scroll)
+   =================================================================== */
+
+@keyframes marquee {
+  0% { transform: translateZ(0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 20s) linear infinite;
+}
+
+/* ===================================================================
+   SECTIONS
+   =================================================================== */
+
+.section {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: var(--page-margin);
+}
+
+/* ===================================================================
+   IMAGE PLACEHOLDER — dashed border, labeled
+   =================================================================== */
+
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed var(--color-dark);
+  opacity: 0.12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  position: relative;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    currentColor 20px,
+    currentColor 21px
+  );
+  background-size: 30px 30px;
+  background-clip: padding-box;
+}
+.img-placeholder::after {
+  content: attr(data-label);
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+  background: var(--color-bg);
+  padding: 0.25rem 0.75rem;
+  border-radius: 2px;
+}
+/* Dark background variant */
+.img-placeholder.--light {
+  border-color: #fffff7;
+  color: #fffff7;
+}
+.img-placeholder.--light::after {
+  background: transparent;
+  color: #fffff7;
+}
+
+/* ===================================================================
+   VIDEO PLACEHOLDER
+   =================================================================== */
+
+.video-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 2px dashed var(--color-dark);
+  opacity: 0.12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+}
+.video-placeholder::after {
+  content: '▶ VIDEO';
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+/* ===================================================================
+   CARDS (Vision cards style)
+   =================================================================== */
+
+.vision-card {
+  background: #fff;
+  border-radius: 0.625rem;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+.vision-card__image {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--color-silver);
+}
+
+/* Team cards */
+.team-card {
+  flex: 0 0 auto;
+  width: calc(100vw - var(--page-margin) * 2);
+}
+@media (min-width: 700px) { .team-card { width: 21.875vw; max-width: 306px; } }
+.team-card:nth-child(even) { margin-top: 7rem; }
+.team-card__image {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  background: var(--color-gray);
+}
+.team-card__info {
+  background: var(--color-dark);
+  color: var(--color-bg);
+  padding: 1.25rem;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 90%);
+  margin-top: -2rem;
+  position: relative;
+}
+
+/* FAQ */
+.faq-item {
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 1.5rem 0;
+}
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+';
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  transition: transform 0.3s var(--ease-out);
+}
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+}
+.faq-item .faq-answer {
+  padding-top: 1rem;
+  max-width: 28rem;
+}
+
+/* ===================================================================
+   HEADER
+   =================================================================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 200;
+  padding: var(--page-margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+.header > * { pointer-events: auto; }
+.header.--light { color: var(--color-bg); }
+.header.--dark { color: var(--color-dark); }
+
+/* ===================================================================
+   BUTTONS
+   =================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-out);
+}
+.btn:hover { transform: scale(1.05); }
+
+.btn-pill {
+  background: var(--color-dark);
+  color: var(--color-bg);
+  border-radius: 80px;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-ui), sans-serif;
+  font-weight: 700;
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.btn-circle {
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
